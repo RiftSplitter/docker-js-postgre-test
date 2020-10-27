@@ -1,0 +1,18 @@
+services:
+    db:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: snow
+            POSTGRES_USER: snowhaven
+            POSTGRES_DB: counterdb
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+    web:
+        # image: test-docker-postgre
+        build: .
+        depends_on:
+            - db
+        ports:
+            - "3010:3010"

@@ -10,11 +10,11 @@ app.get('/', async (req, res) => {
     let pool;
 
     try {
-        console.log('creating connection to db');
+        // console.log('creating connection to db');
         pool = new Pool({
             user: 'snowhaven',
-            host: 'localhost',
-            database: 'node-docker-test-db',
+            host: 'db',
+            database: 'counterdb',
             password: 'snow',
             port: 5432,
         });
@@ -23,13 +23,26 @@ app.get('/', async (req, res) => {
         console.error(err);
     };
     
-    console.log('succesfully connected to db');
-    pool.query('SELECT * FROM toggle', (error, results) => {
-        if (error) {
-            throw error;
+    // console.log('succesfully connected to db');
+    // pool.query('SELECT * FROM toggle', (error, results) => {
+    //     if (error) {
+    //         throw error;
+    //     }
+    //     console.log('OUTPUT: ', results.rows);
+    //     res.status(200).json(results.rows);
+    // });
+    pool.connect((err, client, release) => {
+        console.log('testing connect to db');
+        if (err) {
+          return console.error('Error acquiring client', err.stack)
         }
-        console.log('OUTPUT: ', results.rows);
-        res.status(200).json(results.rows);
+        client.query('select * from toggle', (err, result) => {
+          release()
+          if (err) {
+            return console.error('Error executing query', err.stack)
+          }
+          console.log(result.rows)
+        })
     });
 });
 
